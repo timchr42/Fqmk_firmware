@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // it has been reported to work well in such cases.
 //#define SPLIT_WATCHDOG_ENABLE
 
-#define SPLIT_TRANSACTION_IDS_KB KEYBALL_GET_INFO, KEYBALL_GET_MOTION, KEYBALL_SET_CPI
+//#define SPLIT_TRANSACTION_IDS_KB KEYBALL_GET_INFO, KEYBALL_GET_MOTION, KEYBALL_SET_CPI
 
 // RGB LED settings
 #define WS2812_DI_PIN       GP0
@@ -78,3 +78,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPI_SCK_PIN GP22
 #define SPI_MISO_PIN GP20
 #define SPI_MOSI_PIN GP23
+
+#define POINTING_DEVICE_CS_PIN GP21
