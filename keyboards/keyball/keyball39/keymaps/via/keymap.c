@@ -62,7 +62,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 void pointing_device_init_user(void) {
     // always required before the auto mouse feature will work
     set_auto_mouse_layer(4);
-    set_auto_mouse_enable(true);
+    /*set_auto_mouse_enable(true);*/
 }
 
 #ifdef OLED_ENABLE
