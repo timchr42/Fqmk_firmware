@@ -20,6 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 
+#include "bongo.h"
+
+
+enum oled_modes {
+  OLED_BONGO_LAYOUT,
+  OLED_OFF,
+};
+
+int8_t oled_mode = OLED_BONGO_LAYOUT;
+
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // keymap for default (VIA)
@@ -60,18 +70,53 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 void pointing_device_init_user(void) {
-    // always required before the auto mouse feature will work
-    set_auto_mouse_layer(4);
-    /*set_auto_mouse_enable(true);*/
+    /*set_auto_mouse_layer(4);*/
+    /*set_auto_mouse_disable(true);*/
 }
 
+/*#ifdef OLED_ENABLE*/
+/**/
+/*#    include "lib/oledkit/oledkit.h"*/
+/**/
+/*void oledkit_render_info_user(void) {*/
+/*    keyball_oled_render_keyinfo();*/
+/*    keyball_oled_render_ballinfo();*/
+/*    keyball_oled_render_layerinfo();*/
+/*}*/
+/*#endif*/
+/**/
+/*#ifdef OLED_ENABLE*/
+/**/
+/*#    include "lib/oledkit/oledkit.h"*/
+/**/
+/*void oled_render_logo_user(void) {*/
+/*    oled_clear();*/
+/*    draw_bongo();*/
+/*}*/
+/*#endif*/
+
 #ifdef OLED_ENABLE
+bool oled_task_user(void) {
+    oled_clear();
+    switch (oled_mode) {
+        default:
+        case OLED_BONGO_LAYOUT:
+            draw_bongo();
+            break;
+        case OLED_OFF:
+            oled_off();
+            break;
+    }
+    return false;
+}
+#endif
 
-#    include "lib/oledkit/oledkit.h"
+#ifdef OLED_ENABLE
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    if (is_keyboard_master()) {
+        return OLED_ROTATION_180;
+    }
 
-void oledkit_render_info_user(void) {
-    keyball_oled_render_keyinfo();
-    keyball_oled_render_ballinfo();
-    keyball_oled_render_layerinfo();
+    return rotation;
 }
 #endif
