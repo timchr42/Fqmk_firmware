@@ -20,15 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 
-#include "bongo.h"
-
-
-enum oled_modes {
-  OLED_BONGO_LAYOUT,
-  OLED_OFF,
-};
-
-int8_t oled_mode = OLED_BONGO_LAYOUT;
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -74,49 +65,29 @@ void pointing_device_init_user(void) {
     /*set_auto_mouse_disable(true);*/
 }
 
-/*#ifdef OLED_ENABLE*/
-/**/
-/*#    include "lib/oledkit/oledkit.h"*/
-/**/
-/*void oledkit_render_info_user(void) {*/
-/*    keyball_oled_render_keyinfo();*/
-/*    keyball_oled_render_ballinfo();*/
-/*    keyball_oled_render_layerinfo();*/
-/*}*/
-/*#endif*/
-/**/
-/*#ifdef OLED_ENABLE*/
-/**/
-/*#    include "lib/oledkit/oledkit.h"*/
-/**/
-/*void oled_render_logo_user(void) {*/
-/*    oled_clear();*/
-/*    draw_bongo();*/
-/*}*/
-/*#endif*/
-
 #ifdef OLED_ENABLE
-bool oled_task_user(void) {
-    oled_clear();
-    switch (oled_mode) {
-        default:
-        case OLED_BONGO_LAYOUT:
-            draw_bongo();
-            break;
-        case OLED_OFF:
-            oled_off();
-            break;
-    }
-    return false;
+
+#    include "lib/oledkit/oledkit.h"
+#    include "bongo.h"
+#    include "starship_retrogade.h"
+
+void oledkit_render_info_user(void) {
+    /*keyball_oled_render_keyinfo();*/
+    /*keyball_oled_render_ballinfo();*/
+    /*keyball_oled_render_layerinfo();*/
+    render_space();
 }
-#endif
 
-#ifdef OLED_ENABLE
+void oledkit_render_logo_user(void) {
+    draw_bongo();
+}
+
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    if (is_keyboard_master()) {
-        return OLED_ROTATION_180;
-    }
-
-    return rotation;
+  if (!is_keyboard_master()) {
+    return OLED_ROTATION_180;  // flips the display 180 degrees if offhand
+  }
+  return rotation;
 }
+
 #endif
+
