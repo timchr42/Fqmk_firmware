@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 
-char wpm_str[10];
-
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -69,58 +67,53 @@ void pointing_device_init_user(void) {
 
 #ifdef OLED_ENABLE
 
-#    include "lib/oledkit/oledkit.h"
 #    include "bongo_cat.h"
 #    include "starship_retrogade.h"
 
-// right side oled
-void oledkit_render_info_user(void) {
-    render_anim();  // renders pixelart
-
-    oled_set_cursor(0, 0);                            // sets cursor to (row, column) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
-    sprintf(wpm_str, "WPM:%03d", get_current_wpm());  // edit the string to change wwhat shows up, edit %03d to change how many digits show up
-    oled_write(wpm_str, false);                       // writes wpm on top left corner of string
-
-    led_t led_state = host_keyboard_led_state();  // caps lock stuff, prints CAPS on new line if caps led is on
-    oled_set_cursor(0, 1);
-    oled_write_P(led_state.caps_lock ? PSTR("CAPS") : PSTR("       "), false);
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    return !is_keyboard_master() ? OLED_ROTATION_180 : rotation;
 }
 
-// left side oled
-void oledkit_render_logo_user(void) {
-    /*keyball_oled_render_keyinfo();*/
-    /*keyball_oled_render_ballinfo();*/
-    /*keyball_oled_render_layerinfo();*/
-    render_space();
-}
+bool oled_task_user(void) {
+    if (!is_keyboard_master()) {
+        render_anim();  // renders pixelart
 
-/* WPM calculation considerations */
-bool wpm_keycode_user(uint16_t keycode) {
-  if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) ||
-      (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) ||
-      (keycode >= QK_MODS && keycode <= QK_MODS_MAX)) {
-    keycode = keycode & 0xFF;
-  } else if (keycode > 0xFF) {
-    keycode = 0;
-  }
+        oled_set_cursor(0, 0);                            // sets cursor to (row, column) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
+        oled_write_P(PSTR(">"), false);
+        oled_write(get_u8_str(get_current_wpm(), '0'), false);
 
-  // Include keys in WPM calculation
-  if ((keycode >= KC_TAB && keycode <= KC_SLASH) || // Tab - Slash (Symbols, Punctuation, Space)
-      (keycode >= KC_KP_SLASH && keycode <= KC_KP_COMMA) ||  // Keypad numbers - Keypad Dot
-      (keycode >= KC_F1 && keycode <= KC_F12)) { // F1 - F12
-    return true;
-  }
-
-  return false;
+        oled_set_cursor(0, 1);
+        oled_write_P(PSTR(">"), false);
+        switch (get_highest_layer(layer_state)) {
+            case 0:
+                oled_write("DEF", false);
+                break;
+            case 1:
+                oled_write("AUD", false);
+                break;
+            case 2:
+                oled_write("NAV", false);
+                break;
+            case 3:
+                oled_write("MSE", false);
+                break;
+            case 4:
+                oled_write("MSE", false);
+                break;
+            case 5:
+                oled_write("NUM", false);
+                break;
+            case 6:
+                oled_write("SYM", false);
+                break;
+        }
+    } else {
+        render_space();
+    }
+    return false;
 }
 
 #endif
 
-/*oled_rotation_t oled_init_user(oled_rotation_t rotation) {*/
-/*  if (!is_keyboard_master()) {*/
-/*    return OLED_ROTATION_180;  // flips the display 180 degrees if offhand*/
-/*  }*/
-/*  return rotation;*/
-/*}*/
 
 
