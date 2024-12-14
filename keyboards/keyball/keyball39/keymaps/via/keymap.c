@@ -70,12 +70,16 @@ void pointing_device_init_user(void) {
 #    include "bongo_cat.h"
 #    include "starship_retrogade.h"
 
+/*oled_rotation_t oled_init_user(oled_rotation_t rotation) {*/
+/*    return !is_keyboard_master() ? OLED_ROTATION_180 : rotation;*/
+/*}*/
+
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    return !is_keyboard_master() ? OLED_ROTATION_180 : rotation;
+    return rotation;
 }
 
 bool oled_task_user(void) {
-    if (!is_keyboard_master()) {
+    if (is_keyboard_master()) {
         render_anim();  // renders pixelart
 
         oled_set_cursor(0, 0);                            // sets cursor to (row, column) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
