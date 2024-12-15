@@ -70,13 +70,12 @@ void pointing_device_init_user(void) {
 #    include "bongo_cat.h"
 #    include "starship_retrogade.h"
 
-/*oled_rotation_t oled_init_user(oled_rotation_t rotation) {*/
-/*    return !is_keyboard_master() ? OLED_ROTATION_180 : rotation;*/
-/*}*/
-
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    return rotation;
+    return is_keyboard_left() ? rotation : OLED_ROTATION_180;
 }
+/*oled_rotation_t oled_init_user(oled_rotation_t rotation) {*/
+/*    return rotation;*/
+/*}*/
 
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
