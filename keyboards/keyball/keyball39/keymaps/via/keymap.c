@@ -73,9 +73,6 @@ void pointing_device_init_user(void) {
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return is_keyboard_left() ? rotation : OLED_ROTATION_180;
 }
-/*oled_rotation_t oled_init_user(oled_rotation_t rotation) {*/
-/*    return rotation;*/
-/*}*/
 
 bool oled_task_user(void) {
     if (is_keyboard_master()) {
