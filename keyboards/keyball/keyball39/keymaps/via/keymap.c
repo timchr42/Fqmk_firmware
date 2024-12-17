@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 
+uint32_t anim_sleep         = 0;
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -75,6 +76,15 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 bool oled_task_user(void) {
+    if (get_current_wpm() != 000) {
+        oled_on();  // not essential but turns on animation OLED with any alpha keypress
+        anim_sleep = timer_read32();
+    } else {
+        if (timer_elapsed32(anim_sleep) > OLED_TIMEOUT) {
+            oled_off();
+        }
+    }
+
     if (is_keyboard_master()) {
         render_anim();  // renders pixelart
 
